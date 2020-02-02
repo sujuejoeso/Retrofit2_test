@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,20 +28,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Retrofit retrofit = new Retrofit.Builder()
                         .addConverterFactory(GsonConverterFactory.create()) // 使用 Gson 解析
-                        .baseUrl("http://fitstop.pixelforcesystems.com.au/")
+                        .baseUrl("http://192.168.3.103/")
                         .build();
                 XxxAPI api= retrofit.create(XxxAPI.class);
 
-                Call<User> call = api.signIn("0405060781","1111");
-                call.enqueue(new Callback<User>() {
+                Call<List<WeatherForecast>> call = api.getWeatherList();
+                call.enqueue(new Callback<List<WeatherForecast>>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        Log.d("jjjj","OK");
-                    }
+                    public void onResponse(Call<List<WeatherForecast>> call, Response<List<WeatherForecast>> response) {
+                        List<WeatherForecast> weatherList=response.body();
+                        for(int i=0;i<weatherList.size();i++){
 
+                            Log.d("jjjj",weatherList.get(i).getSummary()==null?"null":"not null");
+                        }
+                    }
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
-                        Log.d("jjjj","Fail");
+                    public void onFailure(Call<List<WeatherForecast>> call, Throwable t) {
+                        Log.d("jjjj",t.getMessage());
                     }
                 });
             }
