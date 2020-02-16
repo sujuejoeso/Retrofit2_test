@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,27 +23,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button button=findViewById(R.id.button);
+        final TextView result=findViewById(R.id.result);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Retrofit retrofit = new Retrofit.Builder()
                         .addConverterFactory(GsonConverterFactory.create()) // 使用 Gson 解析
-                        .baseUrl("http://192.168.3.103/")
+                        .baseUrl("http://dummy.restapiexample.com")
                         .build();
                 XxxAPI api= retrofit.create(XxxAPI.class);
 
-                Call<List<WeatherForecast>> call = api.getWeatherList();
-                call.enqueue(new Callback<List<WeatherForecast>>() {
+                Call<ResponseData> call = api.getData();
+                call.enqueue(new Callback<ResponseData>() {
                     @Override
-                    public void onResponse(Call<List<WeatherForecast>> call, Response<List<WeatherForecast>> response) {
-                        List<WeatherForecast> weatherList=response.body();
-                        for(int i=0;i<weatherList.size();i++){
-
-                            Log.d("jjjj",weatherList.get(i).getSummary()==null?"null":"not null");
+                    public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                        String list="Name                 Age"+"\n";
+                        List<Employee> employees=response.body().getData();
+                        for(int i=0;i<employees.size();i++) {
+                            Employee employee=employees.get(i);
+                            list += employee.getEmployeeName() +"      " +employee.getEmployeeAge()+"\n";
                         }
+                        result.setText(list);
                     }
                     @Override
-                    public void onFailure(Call<List<WeatherForecast>> call, Throwable t) {
+                    public void onFailure(Call<ResponseData> call, Throwable t) {
                         Log.d("jjjj",t.getMessage());
                     }
                 });

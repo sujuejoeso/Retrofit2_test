@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 
 
 public interface XxxAPI {
-    @GET("api/WeatherForecast")
-    Call<List<WeatherForecast>> getWeatherList();
+    @GET("/api/v1/employees")
+    Call<ResponseData> getData();
 
 }
